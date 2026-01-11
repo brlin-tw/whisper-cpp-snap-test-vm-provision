@@ -15,6 +15,8 @@ The following materials are referenced during the development of this project an
   Explains how to use the Ansible snap module to manage snaps.
 * [Minimal setup | How to initialize LXD](https://documentation.ubuntu.com/lxd/latest/howto/initialize/#minimal-setup)  
   Explains how to initialize LXD with a minimal setup.
+* [Handlers: running operations on change — Ansible Community Documentation](https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_handlers.html)  
+  Explains how to use handlers in Ansible playbooks.
 
 ## Licensing
 

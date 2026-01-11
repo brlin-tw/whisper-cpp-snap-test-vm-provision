@@ -2,6 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 - name: Deploy test host for testing the Whisper.cpp snap
   hosts: all
+  handlers:
+    - name: Save iptables rule modifications to the system
+      become: true
+      register: iptables_persistent
+      changed_when: iptables_persistent.rc == 0
+      ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
+
   tasks:
     - name: Ensure Snapcraft is installed
       become: true
@@ -33,3 +40,16 @@
       changed_when: lxd_initialization.rc == 0
       ansible.builtin.command:
         cmd: lxd init --minimal
+
+    - name: Fix LXD container IPv4 connectivity
+      become: true
+      notify: Save iptables rule modifications to the system
+      ansible.builtin.iptables:
+        action: insert
+        table: filter
+        chain: INPUT
+        in_interface: lxdbr0
+        protocol: udp
+        destination_port: 67 # DHCP server listening port
+        jump: ACCEPT
+        comment: Allow LXD containers to discover IPv4 addresses
