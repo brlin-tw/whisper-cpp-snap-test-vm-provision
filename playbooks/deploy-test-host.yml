@@ -1,0 +1,35 @@
+# Copyright 2026 林博仁(Buo-ren Lin) <buo.ren.lin@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+- name: Deploy test host for testing the Whisper.cpp snap
+  hosts: all
+  tasks:
+    - name: Ensure Snapcraft is installed
+      become: true
+      community.general.snap:
+        name:
+          - snapcraft
+        classic: true
+
+    - name: Ensure LXD is installed, which is used by Snapcraft
+      become: true
+      community.general.snap:
+        name:
+          - lxd
+
+    - name: Check LXD storage pools so that we can know whether LXD is initialized or not
+      changed_when: false
+      failed_when: false
+      register: lxd_storage_output
+      ansible.builtin.command: lxc storage list --format json
+
+    - name: Set LXD initialization fact
+      ansible.builtin.set_fact:
+        lxd_is_initialized: "{{ (lxd_storage_output.stdout | from_json | length) > 0 }}"
+
+    - name: Initialize LXD
+      become: true
+      when: not lxd_is_initialized
+      register: lxd_initialization
+      changed_when: lxd_initialization.rc == 0
+      ansible.builtin.command:
+        cmd: lxd init --minimal

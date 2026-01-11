@@ -1,0 +1,14 @@
+# Inventory file for the production environment
+#
+# References:
+#   - How to build your inventory — Ansible Documentation
+#     https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html
+#
+# Copyright 2021 The Common Ansible Project Template Contributors <https://github.com/the-common/ansible-project-template/graphs/contributors>
+# SPDX-License-Identifier: CC-BY-SA-4.0
+all:
+  hosts:
+    test:
+      ansible_host: 148.100.85.79
+      ansible_user: linux1
+      ansible_private_key_file: ~/.ssh/id_rsa
